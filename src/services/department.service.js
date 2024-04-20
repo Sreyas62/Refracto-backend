@@ -1,14 +1,15 @@
 const DepartmentModel = require('../models/department.model');
 const bcrypt = require('bcrypt');
 
-exports.getDepartments = async (req, res) => {
+exports.signinDepartments = async (details) => {
+    const { adminEmail, adminPassword } = details;
     try {
-        console.log("service working")
-        const departments = await DepartmentModel.find();
-        return departments;
+        const data = await DepartmentModel.find(adminEmail );
+        console.log('this',data)
+        return data;
     }
     catch (error) {
-        res.status(500).json({ message: error.message });
+        return({message: "user not found", status: 0});
     }
 }
 
@@ -16,26 +17,24 @@ module.exports = exports;
 
 exports.registerDepartment = async (details) => {
     try {
-        const {  departmentName,departmentEmail, departmentPassword } = details;
-        console.log("details",departmentEmail,departmentPassword)
-        bcrypt.hash(departmentPassword, 5, async (err, hash) => {
-            if (err) return ({ message: "Something went wrong",status:0 })
-            try{
-                let dept = new DepartmentModel({departmentName,departmentEmail,departmentPassword:hash})
-                await dept.save()
-                return({message:"User registered successfully",status:1})
-            } catch (error) {
-                return({
-                    message: error.message,
-                    status: 0
-                })
-            }
-        })
-        const department = new DepartmentModel(details);
-        const response = await department.save();
-        return response;
-    }
-    catch (error) {
-        return({ message: error.message });
+        const { departmentID, adminName, departmentName, adminEmail, adminPassword } = details;
+        if(await DepartmentModel.findOne({ adminEmail })) {
+            return { message: "User already exists", status: 0 };
+        }
+        const hashedPassword = await bcrypt.hash(adminPassword, 5);
+
+        const dept = new DepartmentModel({
+            departmentID,
+            adminName,
+            departmentName,
+            adminEmail,
+            adminPassword: hashedPassword 
+        });
+
+        const response = await dept.save();
+
+        return { message: "User registered successfully", status: 1, data: response };
+    } catch (error) {
+        return { message: error.message, status: 0 };
     }
 }
