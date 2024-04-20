@@ -16,12 +16,12 @@ module.exports = exports;
 
 exports.registerDepartment = async (details) => {
     try {
-        const {  email, password } = details;
-        console.log("details",email,password)
-        bcrypt.hash(password, 5, async (err, hash) => {
+        const {  departmentName,departmentEmail, departmentPassword } = details;
+        console.log("details",departmentEmail,departmentPassword)
+        bcrypt.hash(departmentPassword, 5, async (err, hash) => {
             if (err) return ({ message: "Something went wrong",status:0 })
             try{
-                let dept = new DepartmentModel({email,password:hash})
+                let dept = new DepartmentModel({departmentName,departmentEmail,departmentPassword:hash})
                 await dept.save()
                 return({message:"User registered successfully",status:1})
             } catch (error) {

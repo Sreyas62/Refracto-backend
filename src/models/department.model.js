@@ -14,6 +14,11 @@ const departmentDataSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    departmentPassword:{
+        type : String,
+        required : true
+    }
+    
     // Picture : {
     // //     type : String,
     // // },
