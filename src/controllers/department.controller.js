@@ -13,8 +13,6 @@ exports.getDepartments = async (req, res) => {
     }
 }
 
-module.exports = exports;
-
 exports.registerDepartment = async (req, res) => {
     try {
         const details = req.body;
@@ -25,3 +23,7 @@ exports.registerDepartment = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+
+
+module.exports = exports;

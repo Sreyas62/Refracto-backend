@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-
+console.log('Bot has been started ...');
 const token = process.env.TELE_API_KEY; // Replace with your own bot token
 const bot = new TelegramBot(token, { polling: true });
 

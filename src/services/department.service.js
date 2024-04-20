@@ -12,8 +12,6 @@ exports.getDepartments = async (req, res) => {
     }
 }
 
-module.exports = exports;
-
 exports.registerDepartment = async (details) => {
     try {
         const {  departmentName,departmentEmail, departmentPassword } = details;
@@ -39,3 +37,11 @@ exports.registerDepartment = async (details) => {
         return({ message: error.message });
     }
 }
+
+
+
+
+
+
+
+module.exports = exports;
