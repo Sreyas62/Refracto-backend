@@ -2,11 +2,9 @@ const departmentService = require('../services/department.service');
 
 exports.signinDepartments = async (req, res) => {
     try {
-        console.log("controller working")
         const details = req.body;
-        console.log(details);
-        const departments = await departmentService.signinDepartments(details);
-        res.send(departments)
+        const response = await departmentService.signinDepartments(details);
+        res.send({response})
     }
     catch (error) {
         res.status(500).json({ message: error.message });

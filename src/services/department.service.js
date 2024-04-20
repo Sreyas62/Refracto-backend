@@ -4,9 +4,9 @@ const bcrypt = require('bcrypt');
 exports.signinDepartments = async (details) => {
     const { adminEmail, adminPassword } = details;
     try {
-        const data = await DepartmentModel.find(adminEmail );
-        console.log('this',data)
-        return data;
+        const data = await DepartmentModel.find( {adminEmail });
+        const response = {departmentID:data[0].departmentID, adminName:data[0].adminName, departmentName:data[0].departmentName}
+        return response;
     }
     catch (error) {
         return({message: "user not found", status: 0});
