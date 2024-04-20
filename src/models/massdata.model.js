@@ -15,6 +15,6 @@ const massDataSchema = new mongoose.Schema({
 });
 
 userDataSchema.plugin(mongooseDelete, { overrideMethods: 'all' });
-const MassData = mongoose.model('userData', massDataSchema);
+const MassData = mongoose.model('massdata', massDataSchema);
 
 module.exports = MassData;
