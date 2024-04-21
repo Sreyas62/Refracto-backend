@@ -16,6 +16,7 @@ exports.handlecomplaints = async (req, res) => {
   try {
     console.log("contorller working")
     const complaint=req.body
+    console.log(complaint)
     const examples = await chatGptService.handlecomplaints(complaint);
     res.json(examples);
   } catch (error) {
