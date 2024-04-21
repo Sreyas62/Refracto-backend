@@ -2,9 +2,9 @@ const UserDataModel = require('../models/userdata.model');
 
 exports.getUserData = async (req) => {
     try {
-        const id=req.id
+        
         console.log("service working")
-        const user = await UserDataModel.find({user_id:req});
+        const user = await UserDataModel.find(req);
         if (user.length === 0) {
             return { message: "User not found" };
         }
