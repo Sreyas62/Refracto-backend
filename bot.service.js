@@ -23,9 +23,9 @@ function deleteOldEntries() {
 // Call the deleteOldEntries function every 5 minutes
 setInterval(deleteOldEntries, 5 * 60 * 1000);
 
-const callBackendAPI = async () => {
+const apiCallFroDetails = async (chatId) => {
   try {
-      const response = await axios.get('http://localhost:3000/api/endpoint'); 
+      const response = await axios.post('http://localhost:3000/user',chatId); 
       return response.data;
   } catch (error) {
       console.error('Error calling backend API:', error);
@@ -37,6 +37,7 @@ const callBackendAPI = async () => {
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
+  const user = apiCallFroDetails(chatId);
   if (!users[chatId]) { 
   users[chatId] = { state: 'waitingForPhoneNumber' };
   users[chatId].timestamp = Date.now();
