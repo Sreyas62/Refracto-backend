@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 const userDataSchema = new mongoose.Schema({
-    id : {
+    user_id : {
         type : String,
         required : true
     },
-    name : {
+    user_name : {
         type : String,
     },
     aadhaar_id : {
@@ -15,8 +15,13 @@ const userDataSchema = new mongoose.Schema({
     phone_no : {
         type : String,
         required : true
+    },
+    state:{
+        type:String,
+        required:true
     }
-});
+    }
+);
 
 userDataSchema.plugin(mongooseDelete, { overrideMethods: 'all' });
 const userData = mongoose.model('userData', userDataSchema);
