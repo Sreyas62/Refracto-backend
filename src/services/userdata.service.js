@@ -9,6 +9,7 @@ exports.getUserData = async (req) => {
             return { message: "User not found" };
         }
         else{
+            
             return user;
         }
     }
