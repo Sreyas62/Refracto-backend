@@ -45,6 +45,17 @@ const apiCallToSendForVerification = async (user) => {
       throw new Error('Error calling backend API');
   }
 }
+const apiCallToSendProblem = async (user) => {
+  try {
+      const response = await axios.post('http://localhost:3000/massdatas',user );
+      console.log(response.data);
+      return response.data;
+      
+  } catch (error) {
+      console.error('Error calling backend API:', error);
+      throw new Error('Error calling backend API');
+  }
+}
 
 bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
@@ -101,7 +112,7 @@ bot.on('message', async(msg) => {
       }
       user.state = 'waitingForVerification';
       bot.sendMessage(chatId, 'Send for verification');
-      apiCallToSendForVerification({user_id:chatId,aadhaar_id:user.aadhaar,phone_no:user.phoneNumber});
+      apiCallToSendForVerification({user_id:chatId,aadhaar_id:user.aadhaar,phone_no:user.phoneNumber,state:'waitingForProblem'});
       break;
     case 'waitingForVerification' :
       bot.sendMessage(chatId, '/start');
@@ -109,7 +120,16 @@ bot.on('message', async(msg) => {
       user.problem = msg.text;
       bot.sendMessage(chatId, '/start');
       break;
-    case 'problemReceived':
+    case 'problemTitleWaiting':
+      user.problemTitle = msg.text;
+      user.state = 'problemTitleReceived';
+      bot.sendMessage(chatId, 'Please enter the details of your problem:');
+      break;
+    case 'problemTitleReceived':
+      user.problemDetails = msg.text;
+      user.state = 'problemDetailsReceived';
+      bot.sendMessage(chatId, 'Your complaint has been successfully submitted. Thank you!');
+      //apiCallToSendProblem({user_id:chatId,problemTitle:user.problemTitle,problemDetails:user.problemDetails,state:'problemDetailsReceived'})
       console.log('Problem received:');
       break;
   }
@@ -124,8 +144,8 @@ bot.on('callback_query', (query) => {
 
   switch (query.data) {
     case 'CreateNewComplaint':
-      bot.sendMessage(chatId, 'You have chosen to create a complaint.');
-      user.state = 'problemReceived';
+      bot.sendMessage(chatId, 'You have chosen to create a complaint.\n Please name your problem:');
+      user.state = 'problemTitleWaiting';
       break;
     case 'TrackExistingComplaint':
       bot.sendMessage(chatId, 'You have chosen to track an existing complaint.');
