@@ -46,9 +46,9 @@ const apiCallToSendForVerification = async (user) => {
       throw new Error('Error calling backend API');
   }
 }
-const apiCallToSendProblem = async (user) => {
+const apiCallToSendProblem = async (problem) => {
   try {
-      const response = await axios.post('http://localhost:3000/massdatas',user );
+      const response = await axios.post('http://localhost:3000/chatgpt/handlecomplaints',problem );
       console.log(response.data);
       return response.data;
       
@@ -58,6 +58,15 @@ const apiCallToSendProblem = async (user) => {
   }
 }
 
+const apiCallToTrackComplaint = async (user_id) => {
+  try {
+      const response = await axios.get('http://localhost:3000/massdatas',{ params: { user_id } } );
+      return response.data;
+  } catch (error) {
+      console.error('Error calling backend API:', error);
+      throw new Error('Error calling backend API');
+  }
+}
 
 bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
@@ -131,14 +140,14 @@ bot.on('message', async(msg) => {
       user.problemDetails = msg.text;
       user.state = 'problemDetailsReceived';
       bot.sendMessage(chatId, 'Your complaint has been successfully submitted. Thank you!');
-      //apiCallToSendProblem({user_id:chatId,problemTitle:user.problemTitle,problemDetails:user.problemDetails,state:'problemDetailsReceived'})
+      apiCallToSendProblem({user_id:chatId,problemTitle:user.problemTitle,problemDetails:user.problemDetails,state:'problemDetailsReceived'})
       console.log('Problem received:');
       break;
   }
   console.log(users);
 });
 
-bot.on('callback_query', (query) => {
+bot.on('callback_query', async(query) => {
   const chatId = query.message.chat.id;
   const user = users[chatId];
   console.log(user);
@@ -151,8 +160,8 @@ bot.on('callback_query', (query) => {
       break;
     case 'TrackExistingComplaint':
       users.state='waitingForTrack';
-      //const track=await apiCallToTrackComplaint(chatId);
-      bot.sendMessage(chatId, 'You have chosen to track an existing complaint.');
+      const track=await apiCallToTrackComplaint(chatId);
+      bot.sendMessage(chatId, 'Your complaint tracking details is:');
       break;
     default:
       // Handle unrecognized callback data
