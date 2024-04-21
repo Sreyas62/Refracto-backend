@@ -38,3 +38,8 @@ return response.choices[0].message.content;
 //   console.log(resp);
 //   return resp;
 // };
+
+exports.handlecomplaints = async (complaint) => {
+  console.log("service working");
+  return complaint;
+}

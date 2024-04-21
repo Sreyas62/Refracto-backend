@@ -57,5 +57,13 @@ exports.registerDepartment = async (details) => {
     }
 }
 
-
+exports.getDepartmentbyName=async(dep_Name)=>{
+    try{
+        const department=await DepartmentModel.findOne({departmentName:dep_Name});
+        return department;
+    }
+    catch(error){
+        return {message:error.message,status:0}
+    }
+}
 module.exports = exports;
