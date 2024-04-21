@@ -4,14 +4,33 @@ const bcrypt = require('bcrypt');
 exports.signinDepartments = async (details) => {
     const { adminEmail, adminPassword } = details;
     try {
-        const data = await DepartmentModel.find( {adminEmail });
-        const response = {departmentID:data[0].departmentID, adminName:data[0].adminName, departmentName:data[0].departmentName}
-        return response;
-    }
-    catch (error) {
-        return({message: "user not found", status: 0});
+        const data = await DepartmentModel.findOne({ adminEmail }); // Using findOne to get a single document
+        
+        if (!data) {
+            return { message: "User not found", status: 0 };
+        }
+
+        const result = await bcrypt.compare(adminPassword, data.adminPassword);
+
+        if (result) {
+            const response = {
+                departmentID: data.departmentID,
+                adminName: data.adminName,
+                departmentName: data.departmentName
+            };
+            return {
+                message: "Login successful",
+                data: response,
+                status: 1
+            };
+        } else {
+            return { message: "Incorrect password", status: 0 };
+        }
+    } catch (error) {
+        return { message: "Something went wrong: " + error.message, status: 0 };
     }
 }
+
 
 module.exports = exports;
 

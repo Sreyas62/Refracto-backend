@@ -4,6 +4,7 @@ exports.signinDepartments = async (req, res) => {
     try {
         const details = req.body;
         const response = await departmentService.signinDepartments(details);
+        console.log('here',response)
         res.send({response})
     }
     catch (error) {
