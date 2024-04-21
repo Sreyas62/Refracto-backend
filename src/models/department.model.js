@@ -2,19 +2,23 @@ const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 
 const departmentDataSchema = new mongoose.Schema({
-    // departmentID : {
-    //     type : String,
-    //     required : true
-    // },
+    departmentID : {
+        type : String,
+        required : true
+    },
+    adminName : {
+        type : String,
+        required : true
+    },
     departmentName : {
         type : String,
         required : true
     },
-    departmentEmail : {
+    adminEmail : {
         type : String,
         required : true
     },
-    departmentPassword:{
+    adminPassword:{
         type : String,
         required : true
     }
