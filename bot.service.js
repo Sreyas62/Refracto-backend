@@ -46,9 +46,9 @@ const apiCallToSendForVerification = async (user) => {
       throw new Error('Error calling backend API');
   }
 }
-const apiCallToSendProblem = async (user) => {
+const apiCallToSendProblem = async (problem) => {
   try {
-      const response = await axios.post('http://localhost:3000/massdatas',user );
+      const response = await axios.post('http://localhost:3000/chatgpt/handlecomplaints',problem );
       console.log(response.data);
       return response.data;
       
@@ -131,7 +131,7 @@ bot.on('message', async(msg) => {
       user.problemDetails = msg.text;
       user.state = 'problemDetailsReceived';
       bot.sendMessage(chatId, 'Your complaint has been successfully submitted. Thank you!');
-      //apiCallToSendProblem({user_id:chatId,problemTitle:user.problemTitle,problemDetails:user.problemDetails,state:'problemDetailsReceived'})
+      apiCallToSendProblem({user_id:chatId,problemTitle:user.problemTitle,problemDetails:user.problemDetails,state:'problemDetailsReceived'})
       console.log('Problem received:');
       break;
   }
