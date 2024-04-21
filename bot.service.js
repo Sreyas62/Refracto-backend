@@ -2,6 +2,7 @@ const TelegramBot = require('node-telegram-bot-api');
 console.log('Bot has been started ...');const axios = require('axios');
 
 const dotenv = require('dotenv');
+const { use } = require('./src/routes');
 dotenv.config();
 const token = process.env.TELE_API_KEY; // Replace with your own bot token
 const bot = new TelegramBot(token, { polling: true });
@@ -56,6 +57,7 @@ const apiCallToSendProblem = async (user) => {
       throw new Error('Error calling backend API');
   }
 }
+
 
 bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
@@ -148,6 +150,8 @@ bot.on('callback_query', (query) => {
       user.state = 'problemTitleWaiting';
       break;
     case 'TrackExistingComplaint':
+      users.state='waitingForTrack';
+      //const track=await apiCallToTrackComplaint(chatId);
       bot.sendMessage(chatId, 'You have chosen to track an existing complaint.');
       break;
     default:
