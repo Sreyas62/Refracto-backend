@@ -58,6 +58,15 @@ const apiCallToSendProblem = async (problem) => {
   }
 }
 
+const apiCallToTrackComplaint = async (user_id) => {
+  try {
+      const response = await axios.get('http://localhost:3000/massdatas',{ params: { user_id } } );
+      return response.data;
+  } catch (error) {
+      console.error('Error calling backend API:', error);
+      throw new Error('Error calling backend API');
+  }
+}
 
 bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
@@ -138,7 +147,7 @@ bot.on('message', async(msg) => {
   console.log(users);
 });
 
-bot.on('callback_query', (query) => {
+bot.on('callback_query', async(query) => {
   const chatId = query.message.chat.id;
   const user = users[chatId];
   console.log(user);
@@ -151,8 +160,8 @@ bot.on('callback_query', (query) => {
       break;
     case 'TrackExistingComplaint':
       users.state='waitingForTrack';
-      //const track=await apiCallToTrackComplaint(chatId);
-      bot.sendMessage(chatId, 'You have chosen to track an existing complaint.');
+      const track=await apiCallToTrackComplaint(chatId);
+      bot.sendMessage(chatId, 'Your complaint tracking details is:');
       break;
     default:
       // Handle unrecognized callback data
