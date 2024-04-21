@@ -23,10 +23,9 @@ function deleteOldEntries() {
 // Call the deleteOldEntries function every 5 minutes
 setInterval(deleteOldEntries, 5 * 60 * 1000);
 
-const apiCallFroDetails = async (chatId) => {
+const apiCallFroDetails = async (user_id) => {
   try {
-      const response = await axios.get('http://localhost:3000/user',chatId); 
-      console.log(JSON.stringify(response.data));
+      const response = await axios.get('http://localhost:3000/user',{ params: { user_id } } );
       return response.data;
       
   } catch (error) {
@@ -35,11 +34,20 @@ const apiCallFroDetails = async (chatId) => {
   }
 }
 
-
+const apiCallToSendForVerification = async (user) => {
+  try {
+      const response = await axios.post('http://localhost:3000/massdatas',user );
+      console.log(response.data);
+      return response.data;
+      
+  } catch (error) {
+      console.error('Error calling backend API:', error);
+      throw new Error('Error calling backend API');
+  }
+}
 
 bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
-  console.log(chatId);
   const user =await apiCallFroDetails(chatId);
   console.log(user);
   if (user.message==="User not found") { 
@@ -47,7 +55,8 @@ bot.onText(/\/start/,async (msg) => {
   users[chatId].timestamp = Date.now();
   bot.sendMessage(chatId, 'Hello! Please enter your phone number:');
   }
-  else if (user.state === 'waitingForProblem') {
+  else if (user[0].state !== 'waitingForPhoneNumber' && user[0].state !== 'waitingForAadhaar') {
+    users[chatId] = user[0];
     bot.sendMessage(chatId, 'Hello! Choose an option:', {
       reply_markup: {
         inline_keyboard: [
@@ -71,7 +80,7 @@ bot.onText(/\/start/,async (msg) => {
 
 bot.on('message', async(msg) => {
   const chatId = msg.chat.id;
-  const user = await apiCallFroDetails(chatId);
+  const user = users[chatId];
   if (!user) return;
 
   switch (user.state) {
@@ -92,15 +101,16 @@ bot.on('message', async(msg) => {
       }
       user.state = 'waitingForVerification';
       bot.sendMessage(chatId, 'Send for verification');
+      apiCallToSendForVerification({user_id:chatId,aadhaar_id:user.aadhaar,phone_no:user.phoneNumber});
       break;
+    case 'waitingForVerification' :
+      bot.sendMessage(chatId, '/start');
     case 'waitingForProblem':
       user.problem = msg.text;
-      user.state = 'waitingForConfirmation';
-      bot.sendMessage(chatId, 'Thank you for your message. We will get back to you soon.');
+      bot.sendMessage(chatId, '/start');
       break;
-    case 'waitingForConfirmation':
-      delete users[chatId];
-     //send the message to the admin
+    case 'problemReceived':
+      console.log('Problem received:');
       break;
   }
   console.log(users);
@@ -109,11 +119,13 @@ bot.on('message', async(msg) => {
 bot.on('callback_query', (query) => {
   const chatId = query.message.chat.id;
   const user = users[chatId];
+  console.log(user);
   if (!user) return;
 
   switch (query.data) {
     case 'CreateNewComplaint':
       bot.sendMessage(chatId, 'You have chosen to create a complaint.');
+      user.state = 'problemReceived';
       break;
     case 'TrackExistingComplaint':
       bot.sendMessage(chatId, 'You have chosen to track an existing complaint.');

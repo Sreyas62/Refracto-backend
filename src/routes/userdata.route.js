@@ -4,6 +4,6 @@ const express = require('express');
 const routes = express.Router();
 
 routes.route('/')
-    .post(userController.getUserData);
+    .get(userController.getUserData);
 
 module.exports = routes;
