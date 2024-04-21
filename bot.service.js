@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const axios = require('axios');
+console.log('Bot has been started ...');const axios = require('axios');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -25,8 +25,10 @@ setInterval(deleteOldEntries, 5 * 60 * 1000);
 
 const apiCallFroDetails = async (chatId) => {
   try {
-      const response = await axios.post('http://localhost:3000/user',chatId); 
+      const response = await axios.get('http://localhost:3000/user',chatId); 
+      console.log(JSON.stringify(response.data));
       return response.data;
+      
   } catch (error) {
       console.error('Error calling backend API:', error);
       throw new Error('Error calling backend API');
@@ -35,15 +37,27 @@ const apiCallFroDetails = async (chatId) => {
 
 
 
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/,async (msg) => {
   const chatId = msg.chat.id;
-  const user = apiCallFroDetails(chatId);
-  if (!users[chatId]) { 
+  console.log(chatId);
+  const user =await apiCallFroDetails(chatId);
+  console.log(user);
+  if (user.message==="User not found") { 
   users[chatId] = { state: 'waitingForPhoneNumber' };
   users[chatId].timestamp = Date.now();
   bot.sendMessage(chatId, 'Hello! Please enter your phone number:');
   }
-  if (users[chatId].state !== 'waitingForPhoneNumber' && users[chatId].state !== 'waitingForAadhaar') {
+  else if (user.state === 'waitingForProblem') {
+    bot.sendMessage(chatId, 'Hello! Choose an option:', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Create a complaint', callback_data: 'CreateNewComplaint' }],
+          [{ text: 'Track existing complaint', callback_data: 'TrackExistingComplaint' }]
+        ]
+      }
+    });
+  }
+ else if (users[chatId].state !== 'waitingForPhoneNumber' && users[chatId].state !== 'waitingForAadhaar') {
     bot.sendMessage(chatId, 'Hello! Choose an option:', {
       reply_markup: {
         inline_keyboard: [
@@ -55,9 +69,9 @@ bot.onText(/\/start/, (msg) => {
   }
 });
 
-bot.on('message', (msg) => {
+bot.on('message', async(msg) => {
   const chatId = msg.chat.id;
-  const user = users[chatId];
+  const user = await apiCallFroDetails(chatId);
   if (!user) return;
 
   switch (user.state) {
@@ -77,7 +91,7 @@ bot.on('message', (msg) => {
         return;
       }
       user.state = 'waitingForVerification';
-      bot.sendMessage(chatId, 'Send for verification:');
+      bot.sendMessage(chatId, 'Send for verification');
       break;
     case 'waitingForProblem':
       user.problem = msg.text;

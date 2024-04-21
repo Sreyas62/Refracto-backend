@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.js",
-    "bot": "node ./bot.service.js",
+    "bot": "nodemon ./bot.service.js",
     "dev": "concurrently \"npm run start\" \"npm run bot\""
   },
   "author": "",
