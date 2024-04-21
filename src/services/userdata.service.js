@@ -1,8 +1,7 @@
 const UserDataModel = require('../models/userdata.model');
 
-exports.getUserData = async (req, res) => {
+exports.getUserData = async (id) => {
     try {
-        const id=req.id
         console.log("service working")
         const user = await UserDataModel.find({id});
         if (user.length === 0) {

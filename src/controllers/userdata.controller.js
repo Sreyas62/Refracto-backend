@@ -2,10 +2,10 @@ const userDataService = require('../services/userdata.service');
 
 exports.getUserData = async (req, res) => {
     try {
+        const id=req.query.id
         console.log("controller working")
-        const details = req.body;
-        console.log(details);
-        const user = await userDataService.getUserData(details);
+        console.log(id);
+        const user = await userDataService.getUserData(id);
         res.send(user)
     }
     catch (error) {
