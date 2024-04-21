@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const OpenAI = require('openai');
 
 // Define your service methods
-exports.askchatgpt = async (complaint) => {
+module.exports.askchatgpt = async (complaint) => {
 const department_details=[
   {departmentID: 284376,
   departmentName: "Police"
@@ -39,7 +39,7 @@ const response = await openai.chat.completions.create({
   messages: [
     {
       "role": "user",
-      "content": `from the content object ${complaint} ,i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${department_details} under which the problem falls under`
+      "content": `from the content object ${complaint},i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${department_details} under which the problem falls under`
     }
   ],
   temperature: 1,
@@ -65,6 +65,6 @@ return response.choices[0].message.content;
 
 exports.handlecomplaints = async (complaint) => {
   console.log("service working in complaints ");
-  const response= await askchatgpt(complaint);
+  const response= await exports.askchatgpt(complaint);
   return response;
 }
