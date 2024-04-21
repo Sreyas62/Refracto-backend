@@ -4,7 +4,8 @@ const dotenv = require('dotenv');
 const OpenAI = require('openai');
 
 // Define your service methods
-exports.askchatgpt = async (complaint) => {
+const askchatgpt = async (complaint) => {
+  console.log('ivide',complaint)
 const department_details=[
   {departmentID: 284376,
   departmentName: "Police"
@@ -32,14 +33,16 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-console.log("service working");
+
+const details = JSON.stringify(department_details);
+console.log("service yaya",complaint);
 
 const response = await openai.chat.completions.create({
   model: "gpt-3.5-turbo",
   messages: [
     {
       "role": "user",
-      "content": `from the content object ${complaint} ,i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${department_details} under which the problem falls under`
+      "content": `from the content object ${complaint} ,i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${details} under which the problem falls under`
     }
   ],
   temperature: 1,
@@ -49,7 +52,8 @@ const response = await openai.chat.completions.create({
   presence_penalty: 0,
 });
 console.log("service working",response);
-return response.choices[0].message.content;
+const data=JSON.parse(response.choices[0].message.content);
+return data;
   // return await Example.find();
 
 };
@@ -64,7 +68,7 @@ return response.choices[0].message.content;
 
 
 exports.handlecomplaints = async (complaint) => {
-  console.log("service working in complaints ");
-  const response= await askchatgpt(complaint);
+  console.log("service working in complaints ",complaint);
+  const response=  await askchatgpt(complaint);
   return response;
 }
