@@ -31,8 +31,6 @@ exports.signinDepartments = async (details) => {
     }
 }
 
-
-
 exports.registerDepartment = async (details) => {
     try {
         const { departmentID, adminName, departmentName, adminEmail, adminPassword } = details;
@@ -56,6 +54,7 @@ exports.registerDepartment = async (details) => {
         return { message: error.message, status: 0 };
     }
 }
+
 
 
 module.exports = exports;
