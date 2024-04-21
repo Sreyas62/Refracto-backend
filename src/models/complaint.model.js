@@ -10,6 +10,10 @@ const complaintDataSchema = new mongoose.Schema({
         type : String,
         required : true
     },
+    user_name : {
+        type : String,
+        required : true
+    },
     departmentName : {
         type : String,
         required : true
@@ -19,9 +23,6 @@ const complaintDataSchema = new mongoose.Schema({
         required : true
     },
     
-    // Picture : {
-    // //     type : String,
-    // // },
 });
 
 complaintDataSchema.plugin(mongooseDelete, { overrideMethods: 'all' });
