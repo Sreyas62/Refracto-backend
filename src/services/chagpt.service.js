@@ -5,8 +5,7 @@ const OpenAI = require('openai');
 const ComplaintModel = require('../models/complaint.model');
 
 // Define your service methods
-const askchatgpt = async (complaint) => {
-  console.log('ivide',complaint)
+exports.askchatgpt = async (complaint) => {
 const department_details=[
   {departmentID: 284376,
   departmentName: "Police"
@@ -43,7 +42,7 @@ const response = await openai.chat.completions.create({
   messages: [
     {
       "role": "user",
-      "content": `from the content object ${complaint} ,i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${details} under which the problem falls under`
+      "content": `from the content object ${complaint} ,i need a json object with compaint which is a details and short description of the problem and problem_title which is the title of the problem and identify the department name and id from ${department_details} under which the problem falls under`
     }
   ],
   temperature: 1,
@@ -83,5 +82,5 @@ if(response){
 return {
 "message":"Complaints registered successfully",
 }
-  
+
 }
