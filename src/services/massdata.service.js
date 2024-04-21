@@ -17,8 +17,9 @@ exports.checkmassData = async (req, res) => {
         console.log("service working")
         const massData = await MassDataModel.find({aadhaar_id,phone_no});
          if(massData){
+           // console.log(massData[0])
             return{
-                username:massData.name,
+                // username:massData[0].name,
                 message:"User verified successfully"
             }
          }
