@@ -2,6 +2,7 @@
 // const Example = require('../models/example');
 const dotenv = require('dotenv');
 const OpenAI = require('openai');
+const ComplaintModel = require('../models/complaint.model');
 
 // Define your service methods
 exports.askchatgpt = async (complaint) => {
@@ -67,7 +68,19 @@ return data;
 
 
 exports.handlecomplaints = async (complaint) => {
-  console.log("service working in complaints ");
-  const response= await askchatgpt(complaint);
-  return response;
+  console.log("service working in complaints ",complaint);
+  const response=  await askchatgpt(complaint);
+
+
+if(response){
+  const {user_id}=complaint
+  const Complaint= new ComplaintModel({
+    user_id,...response
+  })
+  await Complaint.save();
+}
+return {
+"message":"Complaints registered successfully",
+}
+
 }
