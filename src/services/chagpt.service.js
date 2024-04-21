@@ -64,7 +64,7 @@ return response.choices[0].message.content;
 
 
 exports.handlecomplaints = async (complaint) => {
-  console.log("service working");
+  console.log("service working in complaints ");
   const response= await askchatgpt(complaint);
   return response;
 }
