@@ -12,7 +12,7 @@ exports.signinDepartments = async (req, res) => {
     }
 }
 
-module.exports = exports;
+
 
 exports.registerDepartment = async (req, res) => {
     try {
@@ -25,3 +25,17 @@ exports.registerDepartment = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+exports.getDepartmentbyName= async (req, res) => {
+    try {
+        const dep_Name= req.query.dep_name;
+        console.log(dep_Name)
+        const department = await departmentService.getDepartmentbyName(dep_Name);
+        res.send(department)
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
+module.exports = exports;
